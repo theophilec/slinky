@@ -11,7 +11,7 @@ async function run() {
     console.log("WASM initialized");
 
     const links = module.gather_links();
-    console.log("Links:", links);
+    console.log("Output from gather_links:", links);
   } catch (error) {
     console.error("Detailed error:", error.message, error.stack);
   }
