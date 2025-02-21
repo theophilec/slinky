@@ -5,7 +5,7 @@ use web_sys::HtmlAnchorElement;
 use web_sys::HtmlCollection;
 
 #[wasm_bindgen]
-pub fn gather_links() -> String {
+pub fn gather_links(required_links: Option<String>, excluded_links: Option<String>) -> String {
     let window = web_sys::window().expect("no global `window` exists");
     let document = window.document().expect("should have a document on window");
     let links: HtmlCollection = document.get_elements_by_tag_name("a");
@@ -20,12 +20,38 @@ pub fn gather_links() -> String {
         }
     }
     let link_targets_map: HashSet<String> = link_targets.into_iter().collect();
-    let (filtered_links, missing_links) = check_links(link_targets_map, None, None);
+
+    let collected_required_links: Option<HashSet<String>>;
+    if let Some(required_links) = required_links {
+        if required_links.is_empty() {
+            collected_required_links = None;
+        } else {
+            collected_required_links =
+                Some(required_links.split(',').map(|s| s.to_string()).collect());
+        }
+    } else {
+        collected_required_links = None;
+    }
+    let collected_excluded_links: Option<HashSet<String>>;
+    if let Some(excluded_links) = excluded_links {
+        if excluded_links.is_empty() {
+            collected_excluded_links = None;
+        } else {
+            collected_excluded_links =
+                Some(excluded_links.split(',').map(|s| s.to_string()).collect());
+        }
+    } else {
+        collected_excluded_links = None;
+    }
+    let (filtered_links, missing_links) = check_links(
+        link_targets_map,
+        collected_required_links,
+        collected_excluded_links,
+    );
     render_results(filtered_links, missing_links)
 }
 
-
-pub fn check_links(
+fn check_links(
     collected_links: HashSet<String>,
     required_links: Option<HashSet<String>>,
     excluded_links: Option<HashSet<String>>,
@@ -55,7 +81,7 @@ pub fn check_links(
     (filtered_links, missing_links)
 }
 
-pub fn render_results(
+fn render_results(
     links_present: HashSet<String>,
     missing_links: Option<HashSet<String>>,
 ) -> String {

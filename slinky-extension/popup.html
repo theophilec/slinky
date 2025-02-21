@@ -1,0 +1,50 @@
+<!doctype html>
+<html>
+    <head>
+        <style>
+            body {
+                width: 300px;
+                padding: 10px;
+            }
+            .input-group {
+                margin-bottom: 10px;
+            }
+            label {
+                display: block;
+                margin-bottom: 5px;
+            }
+            input {
+                width: 100%;
+                padding: 5px;
+                margin-bottom: 10px;
+            }
+            button {
+                width: 100%;
+                padding: 8px;
+                background-color: #4caf50;
+                color: white;
+                border: none;
+                cursor: pointer;
+            }
+            button:hover {
+                background-color: #45a049;
+            }
+        </style>
+    </head>
+    <body>
+        <title>Slinky link checker</title>
+        <h1>Requirements</h1>
+        <div class="input-group">
+            <label for="required">Required links:</label><br />
+            <input type="text" id="required" name="required" /><br />
+        </div>
+        <div class="input-group">
+            <label for="excluded">Excluded links:</label><br />
+            <input type="text" id="excluded" name="excluded" /><br /><br />
+        </div>
+        <button id="runButton">Run Checks</button>
+        <script src="popup.js"></script>
+
+        <div id="results"></div>
+    </body>
+</html>
