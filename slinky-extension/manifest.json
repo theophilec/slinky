@@ -12,7 +12,7 @@
       "js": ["content.js"]
     }
   ],
-  "permissions": ["activeTab", "scripting"],
+  "permissions": ["activeTab", "scripting", "storage"],
   "web_accessible_resources": [
     {
       "resources": ["pkg/slinky.js", "pkg/slinky_bg.wasm", "pkg/package.json"],
