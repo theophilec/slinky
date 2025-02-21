@@ -1,6 +1,11 @@
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "runChecks") {
-    run(request.requiredLinks, request.excludedLinks);
+    run(request.requiredLinks, request.excludedLinks).then((results) => {
+      chrome.runtime.sendMessage({
+        action: "displayResults",
+        results: results,
+      });
+    });
   }
 });
 async function run(requiredLinks, excludedLinks) {
@@ -19,6 +24,7 @@ async function run(requiredLinks, excludedLinks) {
 
     const links = module.gather_links(requiredLinks, excludedLinks);
     console.log("Output from gather_links:", links);
+    return links;
   } catch (error) {
     console.error("Detailed error:", error.message, error.stack);
   }

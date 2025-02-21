@@ -2,6 +2,30 @@
 <html>
     <head>
         <style>
+            .result-item {
+                background-color: #f9f9f9;
+                padding: 10px;
+                margin-bottom: 10px;
+                border-radius: 4px;
+            }
+
+            .timestamp {
+                color: #666;
+                font-size: 0.8em;
+                margin-bottom: 5px;
+            }
+
+            .content {
+                white-space: pre-wrap;
+                word-break: break-word;
+                font-family: monospace;
+                font-size: 0.9em;
+            }
+
+            .content.error {
+                color: #f44336;
+            }
+
             body {
                 width: 300px;
                 padding: 10px;
@@ -21,13 +45,36 @@
             button {
                 width: 100%;
                 padding: 8px;
-                background-color: #4caf50;
+                margin-bottom: 10px;
                 color: white;
                 border: none;
                 cursor: pointer;
             }
+            #runButton {
+                background-color: #4caf50;
+            }
+            #clearButton {
+                background-color: #f44336;
+            }
             button:hover {
-                background-color: #45a049;
+                opacity: 0.9;
+            }
+            #results {
+                margin-top: 15px;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                max-height: 200px;
+                overflow-y: auto;
+            }
+            .result-item {
+                margin-bottom: 8px;
+                padding: 5px;
+                border-bottom: 1px solid #eee;
+            }
+            .timestamp {
+                font-size: 0.8em;
+                color: #666;
             }
         </style>
     </head>
@@ -43,8 +90,13 @@
             <input type="text" id="excluded" name="excluded" /><br /><br />
         </div>
         <button id="runButton">Run Checks</button>
-        <script src="popup.js"></script>
+        <button id="clearButton">Clear History</button>
 
-        <div id="results"></div>
+        <div id="results">
+            <h3>Results History</h3>
+            <div id="resultsContent"></div>
+        </div>
+
+        <script src="popup.js"></script>
     </body>
 </html>
