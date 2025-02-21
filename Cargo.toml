@@ -2,6 +2,9 @@
 name = "slinky"
 version = "0.1.0"
 edition = "2021"
+repository = "https://github.com/theophilec/slinky"
+license = "MIT"
+description = "Slinky is a browser extension that analyses links on webpages (link checking, counting, validation, ...) using WebAssembly (Rust)."
 
 [dependencies]
 wasm-bindgen = "0.2"
