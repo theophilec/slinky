@@ -6,19 +6,7 @@ use web_sys::HtmlCollection;
 
 #[wasm_bindgen]
 pub fn gather_links(required_links: Option<String>, excluded_links: Option<String>) -> String {
-    let window = web_sys::window().expect("no global `window` exists");
-    let document = window.document().expect("should have a document on window");
-    let links: HtmlCollection = document.get_elements_by_tag_name("a");
-    let mut link_targets = Vec::new();
-
-    for i in 0..links.length() {
-        if let Some(link) = links.item(i) {
-            if let Some(anchor) = link.dyn_ref::<HtmlAnchorElement>() {
-                // ignore None case in Options in item and dyn_ref
-                link_targets.push(anchor.href());
-            }
-        }
-    }
+    let link_targets = collect_links_from_window();
     let link_targets_map: HashSet<String> = link_targets.into_iter().collect();
 
     let collected_required_links: Option<HashSet<String>>;
@@ -49,6 +37,24 @@ pub fn gather_links(required_links: Option<String>, excluded_links: Option<Strin
         collected_excluded_links,
     );
     render_results(filtered_links, missing_links)
+}
+
+fn collect_links_from_window() -> Vec<String> {
+    let window = web_sys::window().expect("no global `window` exists");
+    let document = window.document().expect("should have a document on window");
+    let links: HtmlCollection = document.get_elements_by_tag_name("a");
+    let mut link_targets = Vec::new();
+
+    for i in 0..links.length() {
+        if let Some(link) = links.item(i) {
+            if let Some(anchor) = link.dyn_ref::<HtmlAnchorElement>() {
+                // ignore None case in Options in item and dyn_ref
+                link_targets.push(anchor.href());
+            }
+        }
+    }
+
+    link_targets
 }
 
 fn check_links(
