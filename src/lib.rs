@@ -7,17 +7,15 @@ use web_sys::HtmlCollection;
 #[wasm_bindgen]
 pub fn gather_links(required_links: Option<String>, excluded_links: Option<String>) -> String {
     let link_targets = collect_links_from_window();
-    let link_targets_map: HashSet<String> = link_targets.into_iter().collect();
+    let link_targets_map = HashSet::from_iter(link_targets.iter().map(|x| x.as_str()));
 
-    let collected_required_links = required_links.map_or_else(
-        || HashSet::new(),
-        |x| x.split(',').map(|s| s.to_string()).collect(),
-    );
+    let collected_required_links = required_links
+        .as_ref()
+        .map_or_else(|| HashSet::new(), |x| x.split(',').collect());
 
-    let collected_excluded_links = excluded_links.map_or_else(
-        || HashSet::new(),
-        |x| x.split(',').map(|s| s.to_string()).collect(),
-    );
+    let collected_excluded_links = excluded_links
+        .as_ref()
+        .map_or_else(|| HashSet::new(), |x| x.split(',').collect());
 
     let (filtered_links, missing_links) = check_links(
         link_targets_map,
@@ -45,25 +43,24 @@ fn collect_links_from_window() -> Vec<String> {
     link_targets
 }
 
-fn check_links(
-    collected_links: HashSet<String>,
-    required_links: HashSet<String>,
-    excluded_links: HashSet<String>,
-) -> (HashSet<String>, HashSet<String>) {
+fn check_links<'a>(
+    collected_links: HashSet<&'a str>,
+    required_links: HashSet<&'a str>,
+    excluded_links: HashSet<&'a str>,
+) -> (HashSet<&'a str>, HashSet<&'a str>) {
     let filtered_links = collected_links
         .difference(&excluded_links)
-        .map(|x| x.to_string())
+        .map(|x| *x)
         .collect();
-
     let missing_links = required_links
         .difference(&filtered_links)
-        .map(|x| x.to_string())
+        .map(|x| *x)
         .collect();
 
     (filtered_links, missing_links)
 }
 
-fn render_results(links_present: HashSet<String>, missing_links: HashSet<String>) -> String {
+fn render_results(links_present: HashSet<&str>, missing_links: HashSet<&str>) -> String {
     let mut results = String::new();
 
     results.push_str("Links present:\n");
