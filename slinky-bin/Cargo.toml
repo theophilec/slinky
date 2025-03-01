@@ -1,0 +1,12 @@
+[package]
+name = "slinky-bin"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+slinky_lib = { path = "../slinky-lib" }
+reqwest = { version = "0.12.12", features = ["blocking"] }
+
+[[bin]]
+name = "slinky-bin"
+path = "main.rs"

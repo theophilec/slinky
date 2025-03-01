@@ -4,6 +4,8 @@ use wasm_bindgen::JsCast;
 use web_sys::HtmlAnchorElement;
 use web_sys::HtmlCollection;
 
+pub mod checker;
+
 #[wasm_bindgen]
 pub fn gather_links(required_links: Option<String>, excluded_links: Option<String>) -> String {
     let link_targets = collect_links_from_window();
