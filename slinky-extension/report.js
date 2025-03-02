@@ -119,6 +119,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
   function displayResultsHistory(history) {
     resultsContent.innerHTML = "";
+
     history.forEach((item) => {
       const resultDiv = document.createElement("div");
       resultDiv.className = "result-item";
@@ -126,18 +127,108 @@ document.addEventListener("DOMContentLoaded", function () {
       const timestampDiv = document.createElement("div");
       timestampDiv.className = "timestamp";
       timestampDiv.textContent = item.timestamp;
+      resultDiv.appendChild(timestampDiv);
 
-      const contentDiv = document.createElement("div");
-      contentDiv.className = "content";
       if (item.data.error) {
-        contentDiv.textContent = `Error: ${item.data.error}`;
-        contentDiv.style.color = "red";
+        // Create an error message element
+        const errorDiv = document.createElement("div");
+        errorDiv.className = "error-message";
+        errorDiv.textContent = `Error: ${item.data.error}`;
+        resultDiv.appendChild(errorDiv);
       } else {
-        contentDiv.textContent = JSON.stringify(item.data, null, 2);
+        // Create a table to display the URLs
+        const table = document.createElement("table");
+        table.className = "url-table";
+
+        // Create table header
+        const thead = document.createElement("thead");
+        const headerRow = document.createElement("tr");
+        const headerCell = document.createElement("th");
+        headerCell.textContent = "URL";
+        headerRow.appendChild(headerCell);
+        thead.appendChild(headerRow);
+        table.appendChild(thead);
+
+        // Create table body
+        const tbody = document.createElement("tbody");
+
+        // Parse the string data with newline separators
+        let urlList = [];
+        let currentSection = "";
+
+        // Handle the string data format
+        if (typeof item.data === "string") {
+          // Split the string by lines
+          const lines = item.data.split("\n");
+
+          lines.forEach((line) => {
+            // Identify section headers
+            if (line.endsWith(":")) {
+              currentSection = line.trim();
+            }
+            // Extract URLs (lines with http or https that have been indented)
+            else if (line.trim().startsWith("http")) {
+              urlList.push({
+                url: line.trim(),
+                section: currentSection,
+              });
+            }
+          });
+        }
+        // Fallback for other data structures
+        else if (Array.isArray(item.data)) {
+          urlList = item.data.map((url) => ({ url }));
+        } else if (item.data && typeof item.data === "object") {
+          // Try to extract URLs from object format
+          try {
+            if (Array.isArray(item.data.urls)) {
+              urlList = item.data.urls.map((url) => ({ url }));
+            } else if (item.data.links && Array.isArray(item.data.links)) {
+              urlList = item.data.links.map((url) => ({ url }));
+            }
+          } catch (e) {
+            console.error("Failed to parse object data:", e);
+          }
+        }
+
+        // If we have URLs to display
+        if (urlList.length > 0) {
+          let lastSection = null;
+
+          urlList.forEach((item) => {
+            // If we're starting a new section, add a header row
+            if (item.section && item.section !== lastSection) {
+              const sectionRow = document.createElement("tr");
+              const sectionCell = document.createElement("td");
+              sectionCell.textContent = item.section;
+              sectionCell.style.fontWeight = "bold";
+              sectionCell.style.backgroundColor = "#f0f0f0";
+              sectionRow.appendChild(sectionCell);
+              tbody.appendChild(sectionRow);
+              lastSection = item.section;
+            }
+
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.textContent = typeof item === "object" ? item.url : item;
+
+            row.appendChild(cell);
+            tbody.appendChild(row);
+          });
+        } else {
+          // No URLs found - add a message row
+          const row = document.createElement("tr");
+          const cell = document.createElement("td");
+          cell.textContent = "No URLs found or data is not in expected format";
+          row.appendChild(cell);
+          tbody.appendChild(row);
+        }
+
+        table.appendChild(tbody);
+        resultDiv.appendChild(table);
       }
 
-      resultDiv.appendChild(timestampDiv);
-      resultDiv.appendChild(contentDiv);
       resultsContent.appendChild(resultDiv);
     });
   }
