@@ -76,6 +76,20 @@
                 font-size: 0.8em;
                 color: #666;
             }
+
+            .tab-selector-container {
+                margin: 20px 0;
+            }
+
+            .tab-dropdown {
+                width: 100%;
+                padding: 8px 12px;
+                margin-top: 6px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                background-color: #fff;
+                font-size: 14px;
+            }
         </style>
     </head>
     <body>
@@ -89,6 +103,12 @@
             <label for="excluded">Excluded links:</label><br />
             <input type="text" id="excluded" name="excluded" /><br /><br />
         </div>
+        <div class="input-group">
+            <label for="tab-selector">Select Target Tab:</label>
+            <select id="tab-selector" class="input-field">
+                <!-- Options will be populated via JavaScript -->
+            </select>
+        </div>
         <button id="runButton">Run Checks</button>
         <button id="clearButton">Clear History</button>
 
@@ -97,6 +117,6 @@
             <div id="resultsContent"></div>
         </div>
 
-        <script src="popup.js"></script>
+        <script src="report.js"></script>
     </body>
 </html>

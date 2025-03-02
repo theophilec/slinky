@@ -1,14 +1,38 @@
+console.log("Content script loaded.");
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request.action === "runChecks") {
-    run(request.requiredLinks, request.excludedLinks).then((results) => {
-      chrome.runtime.sendMessage({
-        action: "displayResults",
-        results: results,
-      });
-    });
+    console.log("Received message from report.js script");
+    // function function_to_inject() {
+    //   console.log("In function to inject");
+    //   run(
+    //     request.targetTabId,
+    //     request.requiredLinks,
+    //     request.excludedLinks,
+    //   ).then((results) => {
+    //     chrome.runtime.sendMessage({
+    //       action: "displayResults",
+    //       results: results,
+    //     });
+    //   });
+    // }
+
+    // chrome.tabs.executeScript({
+    //   target: request.targetTabId,
+    //   func: function_to_inject,
+    // });
+    run(request.targetTabId, request.requiredLinks, request.excludedLinks).then(
+      (results) => {
+        chrome.runtime.sendMessage({
+          action: "displayResults",
+          results: results,
+        });
+      },
+    );
   }
 });
-async function run(requiredLinks, excludedLinks) {
+
+async function run(targetTabId, requiredLinks, excludedLinks) {
   console.log("Required links:", requiredLinks);
   console.log("Excluded links:", excludedLinks);
   try {
